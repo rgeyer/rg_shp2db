@@ -29,7 +29,9 @@ class RGShp2Db
   def do_work(message_env, message)
     starttime = Time.now
 
-    cmd = "shp2db -f #{message_env[:s3_download]} -a #{message_env[:db_type]} -H #{message_env[:db_host]} -n #{message_env[:db_name]} -u #{message_env[:db_user]} -s #{message_env[:db_shape_table]} -P #{message_env[:db_point_table]}"
+    shapefile = File.join(message_env[:s3_in], message_env[:shapefile])
+
+    cmd = "shp2db -f #{shapefile} -a #{message_env[:db_type]} -H #{message_env[:db_host]} -n #{message_env[:db_name]} -u #{message_env[:db_user]} -s #{message_env[:db_shape_table]} -P #{message_env[:db_point_table]}"
     cmd += " -p #{message_env[:db_pass]}" if message_env[:db_pass]
     cmd += " -O #{message_env[:offset]} -C #{message_env[:count]}" if message_env[:offset] && message_env[:count]
     write_log("Executing -- #{cmd}", message_env)

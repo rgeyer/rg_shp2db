@@ -5,7 +5,9 @@
   "providing": {
   },
   "recipes": {
-    "rg_shp2db::coordinator": "Sets up a coordinator node which will host the MySQL database, and run the job producer and consumer scripts"
+    "rg_shp2db::2010_census_tracts": "Downloads the 2010 US Census Tract shapefiles for all states",
+    "rg_shp2db::coordinator": "Sets up a coordinator node which will host the MySQL database, and run the job producer and consumer scripts",
+    "rg_shp2db::run_jobproducer": "Enqueues jobs for the grid"
   },
   "maintainer": "Ryan J. Geyer",
   "replacing": {
@@ -31,12 +33,11 @@
       "display_name": "ActiveRecord database adapter type"
     },
     "rg_shp2db/db_host": {
-      "required": "optional",
+      "required": "required",
       "calculated": false,
       "choice": [
 
       ],
-      "default": "localhost",
       "type": "string",
       "recipes": [
         "rg_shp2db::coordinator"

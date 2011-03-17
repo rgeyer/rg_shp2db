@@ -6,6 +6,8 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
 version          "0.0.1"
 
 recipe "rg_shp2db::coordinator", "Sets up a coordinator node which will host the MySQL database, and run the job producer and consumer scripts"
+recipe "rg_shp2db::2010_census_tracts", "Downloads the 2010 US Census Tract shapefiles for all states"
+recipe "rg_shp2db::run_jobproducer", "Enqueues jobs for the grid"
 
 attribute "rg_shp2db/db_type",
   :display_name => "ActiveRecord database adapter type",
@@ -17,7 +19,7 @@ attribute "rg_shp2db/db_host",
   :display_name => "Database hostname",
   :description => "Hostname for the server which will recieve the results of the shapefile to database conversion",
   :recipes => ["rg_shp2db::coordinator"],
-  :default => "localhost"
+  :required => "required"
 
 attribute "rg_shp2db/db_user",
   :display_name => "Database username",

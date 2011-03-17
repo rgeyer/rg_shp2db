@@ -42,6 +42,11 @@ def log_message(log_msg_txt)
   puts log_msg_txt
 end
 
+def create_job_serial(serial_hash)
+  serial_hash[:index] += 1
+  "#{serial_hash[:jobid]}_#{serial_hash[:index]}"
+end
+
 # Load jobspec
 jobyaml = "jobspec.yml"
 jobspec = YAML::load_file(jobyaml)
@@ -57,16 +62,16 @@ sqs = RightAws::SqsGen2.new(jobspec[:access_key_id], jobspec[:secret_access_key]
 inqueue = sqs.queue(jobspec[:inputqueue], false)
 log_message("Input Queue: #{jobspec[:inputqueue]}")
 
-rrpid = $$
-job_idx = 0
+serial_hash = {:jobid => $$, :index => 0}
 
 Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
-  serialid = "#{rrpid}_#{job_idx}"
+  basename = File.basename(filename)
+  upload_file(bucket, basename, File.open(filename))
 
   work_unit = {
 	  :created_at => Time.now.utc.strftime('%Y-%m-%d %H:%M:%S %Z'),
-    :s3_download => filename,
-    :serial => serialid,
+    :s3_download => [File.join(jobspec[:bucket], filename)],
+    :shapefile => basename,
     :db_type => jobspec[:db_type]
   }
 
@@ -77,14 +82,13 @@ Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
   if total_shapes > jobspec[:chunk_size]
     shape_idx = 0
     while (shape_idx < total_shapes)
-      work_unit.merge!({:offset => shape_idx, :count => jobspec[:chunk_size]})
+      work_unit.merge!({:offset => shape_idx, :count => jobspec[:chunk_size], :serial => create_job_serial(serial_hash)})
       enqueue_work_unit(inqueue, work_unit, jobspec)
       shape_idx += jobspec[:chunk_size]
-      job_idx += 1
     end
   else
+    work_unit.merge!({:serial => create_job_serial(serial_hash)})
     enqueue_work_unit(inqueue, work_unit, jobspec)
-    job_idx += 1
   end
   spfile.close
 end
