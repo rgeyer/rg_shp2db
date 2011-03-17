@@ -1,0 +1,19 @@
+---
+:name: Shapefile To Database
+:worker_name: RGShp2Db
+:bucket: <%= node[:rightgrid][:s3_bucket] %>
+:db_type: <%= node[:rg_shp2db][:db_type] %>
+:db_host: <%= node[:rg_shp2db][:db_host] %>
+:db_user: <%= node[:rg_shp2db][:db_user] %>
+:db_pass: <%= node[:rg_shp2db][:db_pass] %>
+:db_name: <%= node[:rg_shp2db][:db_name] %>
+:db_shape_table: <%= node[:rg_shp2db][:db_shape_table] %>
+:db_point_table: <%= node[:rg_shp2db][:db_point_table] %>
+:inputqueue: <%= node[:rightgrid][:input_queue] %>
+:outputqueue: <%= node[:rightgrid][:output_queue] %>
+:auditqueue: <%= node[:rightgrid][:audit_queue] %>
+:access_key_id: <%= node[:rightgrid][:aws_access_key_id] %>
+:secret_access_key: <%= node[:rightgrid][:aws_secret_access_key] %>
+:shapefile_dir: <%= node[:rg_shp2db][:shapefile_dir] %>
+:chunk_size: <%= node[:rg_shp2db][:chunk_size] %>
+:to_the_grid: true

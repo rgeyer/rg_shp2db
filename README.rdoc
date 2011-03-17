@@ -1,0 +1,1 @@
+See chef/templates/default/jobspec.yml.erb for jobspec template.
