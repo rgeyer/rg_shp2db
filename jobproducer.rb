@@ -70,7 +70,7 @@ Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
 
   work_unit = {
 	  :created_at => Time.now.utc.strftime('%Y-%m-%d %H:%M:%S %Z'),
-    :s3_download => [File.join(jobspec[:bucket], filename)],
+    :s3_download => [File.join(jobspec[:bucket], basename)],
     :shapefile => basename,
     :db_type => jobspec[:db_type]
   }

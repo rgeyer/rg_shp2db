@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `shapes` (
   `longitude_min` float NOT NULL DEFAULT '-180',
   `longitude_max` float NOT NULL DEFAULT '180',
   `source` varchar(32) DEFAULT NULL,
-  `name` float(6,2) DEFAULT NULL,
+  `name10` float(6,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `tract_id` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
