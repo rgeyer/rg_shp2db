@@ -24,7 +24,7 @@ end
 directory "/mnt/rg_shp2db"
 
 git "/mnt/rg_shp2db" do
-  repository "git://github.com/rgeyer/rs_shp2db.git"
+  repository "git://github.com/rgeyer/rg_shp2db.git"
   action :sync
 end
 
