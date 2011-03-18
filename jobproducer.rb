@@ -64,13 +64,22 @@ log_message("Input Queue: #{jobspec[:inputqueue]}")
 
 serial_hash = {:jobid => $$, :index => 0}
 
+# Upload all the components of the shapefiles, except the zip files
+Dir.new(jobspec[:shapefile_dir]).each do |f|
+  upload_file(bucket, f, File.open(File.join(jobspec[:shapefile_dir], f))) unless f =~ /(^\.|\.zip$)/
+end
+
 Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
   basename = File.basename(filename)
-  upload_file(bucket, basename, File.open(filename))
+
+  s3_download = [File.join(jobspec[:bucket], basename)]
+  noExtBasename = basename.gsub(File.extname(basename), "")
+
+  Dir.glob(File.join(jobspec[:shapefile_dir], "#{noExtBasename}.*")) {|shp_f| s3_download << File.join(jobspec[:bucket], File.basename(shp_f))}
 
   work_unit = {
 	  :created_at => Time.now.utc.strftime('%Y-%m-%d %H:%M:%S %Z'),
-    :s3_download => [File.join(jobspec[:bucket], basename)],
+    :s3_download => s3_download,
     :shapefile => basename,
     :db_type => jobspec[:db_type]
   }
