@@ -75,7 +75,7 @@ Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
   s3_download = [File.join(jobspec[:bucket], basename)]
   noExtBasename = basename.gsub(File.extname(basename), "")
 
-  Dir.glob(File.join(jobspec[:shapefile_dir], "#{noExtBasename}.*")) {|shp_f| s3_download << File.join(jobspec[:bucket], File.basename(shp_f))}
+  Dir.glob(File.join(jobspec[:shapefile_dir], "#{noExtBasename}.*")) {|shp_f| s3_download << File.join(jobspec[:bucket], File.basename(shp_f)) unless shp_f =~ /\.zip$/}
 
   work_unit = {
 	  :created_at => Time.now.utc.strftime('%Y-%m-%d %H:%M:%S %Z'),
