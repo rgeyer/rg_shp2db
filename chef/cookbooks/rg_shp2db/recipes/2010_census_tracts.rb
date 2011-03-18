@@ -31,7 +31,7 @@ states.each do |fips_code|
 
   bash "Unzip tract file" do
     code <<-EOF
-wget -q -O #{filename} http://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/#{filename}
+wget -q -O #{filepath} http://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/#{filename}
 unzip #{filepath} -d #{node[:rg_shp2db][:shapefile_dir]}
     EOF
   end
