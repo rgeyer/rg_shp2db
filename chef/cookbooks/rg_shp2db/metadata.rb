@@ -62,3 +62,39 @@ attribute "rg_shp2db/chunk_size",
   :description => "The number of shapes that each instantiation of the grid worker will process.",
   :recipes => ["rg_shp2db::coordinator"],
   :default => "50"
+
+attribute "rightgrid/aws_access_key_id",
+  :display_name => "Access Key Id",
+  :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"
+
+attribute "rightgrid/aws_secret_access_key",
+  :display_name => "Secret Access Key",
+  :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"
+
+attribute "rightgrid/input_queue",
+  :display_name => "Input Queue",
+  :description => "The Amazon SQS queue used for input to RightGrid",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"
+
+attribute "rightgrid/output_queue",
+  :display_name => "Output Queue",
+  :description => "The Amazon SQS queue used for output from RightGrid",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"
+
+attribute "rightgrid/audit_queue",
+  :display_name => "Audit Queue",
+  :description => "The Amazon SQS queue used for audit info from RightGrid",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"
+
+attribute "rightgrid/s3_bucket",
+  :display_name => "S3 Bucket",
+  :description => "An S3 bucket where RightGrid will store it's input, output, and log files",
+  :recipes => ["rg_shp2db::coordinator"],
+  :required => "required"

@@ -25,11 +25,14 @@ end
 states.each do |fips_code|
   filename = "tl_2010_#{fips_code}_tract10.zip"
   filepath = ::File.join(node[:rg_shp2db][:shapefile_dir], filename)
-  remote_file filepath do
-    source "http://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/#{filename}"
-  end
+#  remote_file filepath do
+#    source "http://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/#{filename}"
+#  end
 
   bash "Unzip tract file" do
-    code "unzip #{filepath} -d #{node[:rg_shp2db][:shapefile_dir]}"
+    code <<-EOF
+wget -q -O #{filename} http://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/#{filename}
+unzip #{filepath} -d #{node[:rg_shp2db][:shapefile_dir]}
+    EOF
   end
 end

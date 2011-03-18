@@ -18,6 +18,19 @@
   "groupings": {
   },
   "attributes": {
+    "rightgrid/output_queue": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "The Amazon SQS queue used for output from RightGrid",
+      "display_name": "Output Queue"
+    },
     "rg_shp2db/db_type": {
       "required": "optional",
       "calculated": false,
@@ -31,6 +44,19 @@
       ],
       "description": "The name of the ActiveRecord database adapter to use for storing the data",
       "display_name": "ActiveRecord database adapter type"
+    },
+    "rightgrid/audit_queue": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "The Amazon SQS queue used for audit info from RightGrid",
+      "display_name": "Audit Queue"
     },
     "rg_shp2db/db_host": {
       "required": "required",
@@ -72,6 +98,32 @@
       "description": "The name of the table which will recieve the points from the shapefile to database conversion",
       "display_name": "Point table name"
     },
+    "rightgrid/input_queue": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "The Amazon SQS queue used for input to RightGrid",
+      "display_name": "Input Queue"
+    },
+    "rightgrid/aws_secret_access_key": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",
+      "display_name": "Secret Access Key"
+    },
     "rg_shp2db/db_name": {
       "required": "required",
       "calculated": false,
@@ -84,6 +136,19 @@
       ],
       "description": "Name of the database which will recieve the results of the shapefile to database conversion",
       "display_name": "Database name"
+    },
+    "rightgrid/aws_access_key_id": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
+      "display_name": "Access Key Id"
     },
     "rg_shp2db/chunk_size": {
       "required": "optional",
@@ -111,6 +176,19 @@
       ],
       "description": "The full or relative path to a directory containing the shapefiles to be converted.",
       "display_name": "Source shapefile directory"
+    },
+    "rightgrid/s3_bucket": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rightgrid::default"
+      ],
+      "description": "An S3 bucket where RightGrid will store it's input, output, and log files",
+      "display_name": "S3 Bucket"
     },
     "rg_shp2db/db_user": {
       "required": "required",
