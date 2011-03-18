@@ -29,7 +29,7 @@ end
 
 def enqueue_work_unit(queue, work_unit, jobspec)
   if jobspec[:to_the_grid]
-    queue.send_message(work_unit)
+    queue.send_message(work_unit.to_yaml)
   else
     work_unit.merge!({:s3_in => jobspec[:shapefile_dir], :log_dir => '/tmp'})
     puts RGShp2Db.new().do_work(work_unit, nil).to_yaml
