@@ -52,5 +52,5 @@ CREATE TABLE IF NOT EXISTS `shapes` (
   `source` varchar(32) DEFAULT NULL,
   `name10` float(6,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `tract_id` (`name`)
+  KEY `tract_id` (`name10`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
