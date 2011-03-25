@@ -98,6 +98,19 @@
       "description": "The name of the table which will recieve the points from the shapefile to database conversion",
       "display_name": "Point table name"
     },
+    "rightgrid/error_queue": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "rg_shp2db::coordinator"
+      ],
+      "description": "The Amazon SQS queue used for error info from RightGrid",
+      "display_name": "Error Queue"
+    },
     "rightgrid/input_queue": {
       "required": "required",
       "calculated": false,
