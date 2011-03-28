@@ -15,6 +15,11 @@ require 'yaml'
 require 'rubygems'
 require 'right_aws'
 require 'shapelib'
+require 'active_record'
+
+class Test_Run < ActiveRecord::Base
+
+end
 
 begin
   require 'RGShp2Db'
@@ -52,6 +57,15 @@ jobyaml = "jobspec.yml"
 jobspec = YAML::load_file(jobyaml)
 log_message("Job Yaml File: #{jobyaml}")
 
+# Establish DB Connection
+ActiveRecord::Base.establish_connection(
+  :adapter  => jobspec[:db_type],
+  :host     => jobspec[:db_host],
+  :database => jobspec[:db_name],
+  :username => jobspec[:db_user],
+  :password => jobspec[:db_pass]
+)
+
 # Get S3
 s3 = RightAws::S3.new(jobspec[:access_key_id], jobspec[:secret_access_key])
 bucket = s3.bucket(jobspec[:bucket], false)
@@ -62,12 +76,14 @@ sqs = RightAws::SqsGen2.new(jobspec[:access_key_id], jobspec[:secret_access_key]
 inqueue = sqs.queue(jobspec[:inputqueue], false)
 log_message("Input Queue: #{jobspec[:inputqueue]}")
 
-serial_hash = {:jobid => $$, :index => 0}
+serial_hash = {:jobid => "#{Time.now.to_i}-#{$$}", :index => 0}
 
 # Upload all the components of the shapefiles, except the zip files
 Dir.new(jobspec[:shapefile_dir]).each do |f|
   upload_file(bucket, f, File.open(File.join(jobspec[:shapefile_dir], f))) unless f =~ /(^\.|\.zip$)/
 end
+
+proc_files_start = Time.now
 
 Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
   basename = File.basename(filename)
@@ -81,7 +97,8 @@ Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
 	  :created_at => Time.now.utc.strftime('%Y-%m-%d %H:%M:%S %Z'),
     :s3_download => s3_download,
     :shapefile => basename,
-    :db_type => jobspec[:db_type]
+    :db_type => jobspec[:db_type],
+    :jobid => serial_hash[:jobid]
   }
 
   work_unit.merge!(jobspec)
@@ -101,3 +118,9 @@ Dir.glob(File.join(jobspec[:shapefile_dir], "*.shp")) do |filename|
   end
   spfile.close
 end
+
+proc_files_end = Time.now
+
+Test_Run.create({:jobid => serial_hash[:jobid], :job_count => serial_hash[:index]})
+
+log_message("*whew* that took #{proc_files_end - proc_files_start}")

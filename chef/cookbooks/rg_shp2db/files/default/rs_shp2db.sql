@@ -54,3 +54,81 @@ CREATE TABLE IF NOT EXISTS `shapes` (
   PRIMARY KEY (`id`),
   KEY `tract_id` (`name10`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Table structure for table `audits`
+--
+
+CREATE TABLE IF NOT EXISTS `audits` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ec2_instance_id` varchar(16) DEFAULT NULL,
+  `audit_serial` varchar(32) DEFAULT NULL,
+  `audit_receive_timeout` int(10) unsigned DEFAULT NULL,
+  `work_unit_created_at` timestamp NULL DEFAULT NULL,
+  `secs_to_upload` decimal(12,6) unsigned DEFAULT NULL,
+  `result` varchar(32) DEFAULT NULL,
+  `work_item_id` varchar(48) DEFAULT NULL,
+  `queue_url` varchar(256) DEFAULT NULL,
+  `s3_log_path` varchar(256) DEFAULT NULL,
+  `start_timestamp` timestamp NULL DEFAULT NULL,
+  `worker_result` text,
+  `s3_downloaded_bytes` int(10) unsigned DEFAULT NULL,
+  `result_item_id` varchar(48) DEFAULT NULL,
+  `secs_to_download` decimal(12,6) unsigned DEFAULT NULL,
+  `end_timestamp` timestamp NULL DEFAULT NULL,
+  `s3_uploaded_bytes` int(10) unsigned DEFAULT NULL,
+  `secs_to_work` decimal(12,6) unsigned DEFAULT NULL,
+  `yaml` text NOT NULL,
+  `jobid` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `jobid` (`jobid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_errors`
+--
+
+CREATE TABLE IF NOT EXISTS `audit_errors` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `audit_id` int(10) unsigned NOT NULL,
+  `error` varchar(128) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `audit_id` (`audit_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `outputs`
+--
+
+CREATE TABLE IF NOT EXISTS `outputs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `finishtime` timestamp NULL DEFAULT NULL,
+  `audit_serial` varchar(32) DEFAULT NULL,
+  `audit_receive_timeout` int(10) unsigned DEFAULT NULL,
+  `serial` varchar(32) DEFAULT NULL,
+  `result` text,
+  `starttime` int(10) unsigned DEFAULT NULL,
+  `work_item_id` varchar(48) DEFAULT NULL,
+  `right_grid_status` varchar(32) DEFAULT NULL,
+  `yaml` text NOT NULL,
+  `jobid` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobid` (`jobid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `test_runs`
+--
+
+CREATE TABLE IF NOT EXISTS `test_runs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `jobid` varchar(32) NOT NULL,
+  `job_count` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

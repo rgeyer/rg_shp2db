@@ -11,6 +11,19 @@ require 'yaml'
 require 'right_aws'
 require 'optparse'
 require 'fileutils'
+require 'active_record'
+
+class Audit < ActiveRecord::Base
+  has_many :errors, :class_name => 'Audit_Error'
+end
+
+class Audit_Error < ActiveRecord::Base
+
+end
+
+class Output < ActiveRecord::Base
+
+end
 
 # Log messages to the lof file and stdout
 def log_message(log_msg_txt)
@@ -53,6 +66,18 @@ jobyaml = "jobspec.yml"
 jobspec = YAML::load_file(jobyaml)
 log_message("Job Yaml File : #{jobyaml}")
 
+# Establish DB Connection
+ActiveRecord::Base.establish_connection(
+  :adapter  => jobspec[:db_type],
+  :host     => jobspec[:db_host],
+  :database => jobspec[:db_name],
+  :username => jobspec[:db_user],
+  :password => jobspec[:db_pass]
+)
+
+$audit_fields = Audit.new().attribute_names().collect { |it| it.downcase }
+$output_fields = Output.new().attribute_names().collect { |it| it.downcase }
+
 # Get S3 Buckets
 @s3 = RightAws::S3.new(jobspec[:access_key_id], jobspec[:secret_access_key])
 bucket = @s3.bucket(jobspec[:bucket], false)
@@ -88,10 +113,23 @@ def parse_output_queue(o_queue, sleeptime)
   	  if msg != nil then
   			decodemsg = YAML.load(msg.body)
 
-  			log_message(decodemsg)
+  			#log_message(decodemsg)
   			# 4. Some Debug Output
   			log_message("Output Processing: serial ID: #{decodemsg[:serial]} Msg ID: #{msg.id}")	
-  			log_message(msg)
+  			#log_message(msg)
+
+        dbhash = decodemsg
+        dbhash.merge!({
+                        :yaml => msg.body,
+                        :audit_serial => decodemsg[:audit_info][:serial],
+                        :audit_receive_timeout => decodemsg[:audit_info][:receive_message_timeout]
+                      })
+        dbhash.delete_if do |key,val|
+          !$output_fields.include?(key.to_s.downcase)
+        end
+
+        Output.create(dbhash)
+
   			@processed_files += 1
   	  end
   	end
@@ -105,27 +143,46 @@ def parse_audit_queue(a_queue, sleeptime)
   while true do
   	while a_queue.size() > 0 do
   		#create audit file
-  		if !File.exists? 'output/audit.csv'
-  			f = File.new('output/audit.csv','a+')
-  			f.write "serial,result_item_id,secs_to_work,secs_to_download,secs_to_upload\n"
-  			f.close
-  		end
+#  		if !File.exists? 'output/audit.csv'
+#  			f = File.new('output/audit.csv','a+')
+#  			f.write "serial,result_item_id,secs_to_work,secs_to_download,secs_to_upload\n"
+#  			f.close
+#  		end
   	  # Try to dequeue an audit message	
   	  a_msg = dequeue_entry(a_queue)
   	  if a_msg != nil then
     	  #  1. Decode msg
     		decodemsg = YAML.load(a_msg.body)
-    		f=File.new('output/audit.csv','a+')
-    		f.write "#{decodemsg[:audit_info][:serial]},#{decodemsg[:result_item_id]},#{decodemsg[:secs_to_work]},#{decodemsg[:secs_to_download]},#{decodemsg[:secs_to_upload]}\n"
-    		f.close
-    		log_message(decodemsg)
+#    		f=File.new('output/audit.csv','a+')
+#    		f.write "#{decodemsg[:audit_info][:serial]},#{decodemsg[:result_item_id]},#{decodemsg[:secs_to_work]},#{decodemsg[:secs_to_download]},#{decodemsg[:secs_to_upload]}\n"
+#    		f.close
+#    		log_message(decodemsg)
 	
     	  #  2. For example, update a central DB with statistics
     		#   +++ In this example, write data to a .csv file
 		 	 
     		#  3. Some Debug Output
     		log_message("Audit Queue Processing: Msg ID: #{a_msg.id}")
-    		log_message(a_msg)
+    		#log_message(a_msg)
+
+        dbhash = decodemsg
+        dbhash.merge!({
+                        :yaml => a_msg.body,
+                        :audit_serial => decodemsg[:audit_info][:serial],
+                        :audit_receive_timeout => decodemsg[:audit_info][:receive_message_timeout]
+                      })
+        dbhash.delete_if do |key,val|
+          !$audit_fields.include?(key.to_s.downcase)
+        end
+
+        audit_entry = Audit.create(dbhash)
+        if(decodemsg[:errors])
+          puts "Found errors yo..  #{decodemsg[:errors].to_yaml}"
+          decodemsg[:errors].each do |err|
+            Audit_Errors.create({:audit_id => audit_entry.id, :error => err.to_s})
+          end
+        end
+
     	  @processed_files += 1
   		end
   	end
@@ -136,6 +193,7 @@ def parse_audit_queue(a_queue, sleeptime)
 end
 
 def parse_error_queue(e_queue, sleeptime)
+  # TODO: Add DB pushing to this, and some more tools to store the results and take appropriate action
   while true do
   	while e_queue.size() > 0 do 
   	  # Try to dequeue an error message	
