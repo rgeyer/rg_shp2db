@@ -17,7 +17,7 @@ require 'right_aws'
 require 'shapelib'
 require 'active_record'
 
-class Test_Run < ActiveRecord::Base
+class Grid_Run < ActiveRecord::Base
 
 end
 
@@ -121,6 +121,6 @@ end
 
 proc_files_end = Time.now
 
-Test_Run.create({:jobid => serial_hash[:jobid], :job_count => serial_hash[:index]})
+Grid_Run.create({:jobid => serial_hash[:jobid], :job_count => serial_hash[:index]})
 
 log_message("*whew* that took #{proc_files_end - proc_files_start}")

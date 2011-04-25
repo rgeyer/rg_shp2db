@@ -123,10 +123,10 @@ CREATE TABLE IF NOT EXISTS `outputs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `test_runs`
+-- Table structure for table `grid_runs`
 --
 
-CREATE TABLE IF NOT EXISTS `test_runs` (
+CREATE TABLE IF NOT EXISTS `grid_runs` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `jobid` varchar(32) NOT NULL,
   `job_count` int(10) unsigned NOT NULL,

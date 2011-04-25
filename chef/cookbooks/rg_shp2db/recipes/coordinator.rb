@@ -12,12 +12,13 @@
 #  limitations under the License.
 
 include_recipe "rubygems::default"
+include_recipe "db_mysql::client"
 
 %w{shapelib libshp-dev}.each do |p|
   package p
 end
 
-%w{right_aws shapelib}.each do |gem|
+%w{right_aws shapelib activerecord}.each do |gem|
   gem_package gem
 end
 

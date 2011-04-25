@@ -120,6 +120,7 @@ def parse_output_queue(o_queue, sleeptime)
 
         dbhash = decodemsg
         dbhash.merge!({
+                        :jobid => decodemsg[:audit_info][:serial].split('_')[0],
                         :yaml => msg.body,
                         :audit_serial => decodemsg[:audit_info][:serial],
                         :audit_receive_timeout => decodemsg[:audit_info][:receive_message_timeout]
@@ -167,6 +168,7 @@ def parse_audit_queue(a_queue, sleeptime)
 
         dbhash = decodemsg
         dbhash.merge!({
+                        :jobid => decodemsg[:audit_info][:serial].split('_')[0],
                         :yaml => a_msg.body,
                         :audit_serial => decodemsg[:audit_info][:serial],
                         :audit_receive_timeout => decodemsg[:audit_info][:receive_message_timeout]
