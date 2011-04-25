@@ -5,6 +5,7 @@
   "providing": {
   },
   "recipes": {
+    "rg_shp2db::run_jobconsumer": "Dequeues job results, audit information, and errors for the grid",
     "rg_shp2db::2010_census_tracts": "Downloads the 2010 US Census Tract shapefiles for all states",
     "rg_shp2db::coordinator": "Sets up a coordinator node which will host the MySQL database, and run the job producer and consumer scripts",
     "rg_shp2db::run_jobproducer": "Enqueues jobs for the grid"

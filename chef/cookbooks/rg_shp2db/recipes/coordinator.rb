@@ -22,8 +22,6 @@ end
   gem_package gem
 end
 
-directory "/mnt/rg_shp2db"
-
 git "/mnt/rg_shp2db" do
   repository "git://github.com/rgeyer/rg_shp2db.git"
   action :sync

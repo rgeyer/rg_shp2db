@@ -8,6 +8,7 @@ version          "0.0.1"
 recipe "rg_shp2db::coordinator", "Sets up a coordinator node which will host the MySQL database, and run the job producer and consumer scripts"
 recipe "rg_shp2db::2010_census_tracts", "Downloads the 2010 US Census Tract shapefiles for all states"
 recipe "rg_shp2db::run_jobproducer", "Enqueues jobs for the grid"
+recipe "rg_shp2db::run_jobconsumer", "Dequeues job results, audit information, and errors for the grid"
 
 attribute "rg_shp2db/db_type",
   :display_name => "ActiveRecord database adapter type",
