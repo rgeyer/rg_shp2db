@@ -25,6 +25,10 @@ class Output < ActiveRecord::Base
 
 end
 
+class Error < ActiveRecord::Base
+
+end
+
 # Log messages to the lof file and stdout
 def log_message(log_msg_txt)
   `logger -t jobproducer log_msg_txt`
@@ -143,29 +147,15 @@ end
 def parse_audit_queue(a_queue, sleeptime)
   while true do
   	while a_queue.size() > 0 do
-  		#create audit file
-#  		if !File.exists? 'output/audit.csv'
-#  			f = File.new('output/audit.csv','a+')
-#  			f.write "serial,result_item_id,secs_to_work,secs_to_download,secs_to_upload\n"
-#  			f.close
-#  		end
-  	  # Try to dequeue an audit message	
+  	  # Try to dequeue an audit message
   	  a_msg = dequeue_entry(a_queue)
   	  if a_msg != nil then
-    	  #  1. Decode msg
+    	  # Decode msg
     		decodemsg = YAML.load(a_msg.body)
-#    		f=File.new('output/audit.csv','a+')
-#    		f.write "#{decodemsg[:audit_info][:serial]},#{decodemsg[:result_item_id]},#{decodemsg[:secs_to_work]},#{decodemsg[:secs_to_download]},#{decodemsg[:secs_to_upload]}\n"
-#    		f.close
-#    		log_message(decodemsg)
-	
-    	  #  2. For example, update a central DB with statistics
-    		#   +++ In this example, write data to a .csv file
 		 	 
-    		#  3. Some Debug Output
     		log_message("Audit Queue Processing: Msg ID: #{a_msg.id}")
-    		#log_message(a_msg)
 
+        # Log audit information to database
         dbhash = decodemsg
         dbhash.merge!({
                         :jobid => decodemsg[:audit_info][:serial].split('_')[0],
@@ -195,15 +185,16 @@ def parse_audit_queue(a_queue, sleeptime)
 end
 
 def parse_error_queue(e_queue, sleeptime)
-  # TODO: Add DB pushing to this, and some more tools to store the results and take appropriate action
+  # TODO: Add a "retried" counter to this so we're not infinitely retrying the same doomed job.
   while true do
   	while e_queue.size() > 0 do 
   	  # Try to dequeue an error message	
   	  e_msg = dequeue_entry(e_queue)
+
   	  if e_msg != nil then
     		decodemsg = YAML.load(e_msg.body)
-    		log_message("Error Queue Processing: serial ID: #{decodemsg[:serial]} Msg ID: #{e_msg.id}")	
-    		log_message(decodemsg)
+        Errors.create({:yaml => e_msg.body, :jobid => decodemsg["message"][:jobid]})
+    		log_message("Error Queue Processing: serial ID: #{decodemsg[:serial]} Msg ID: #{e_msg.id}")
     		orig_msg=YAML.load(decodemsg["message"])
     	  orig_msg[:conversion_type]="sep"
     	  sndmsg = enqueue_work_unit(@i_queue, YAML.dump(orig_msg))
