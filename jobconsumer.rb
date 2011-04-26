@@ -157,6 +157,11 @@ def parse_audit_queue(a_queue, sleeptime)
           log_message("Failed to decode message #{a_msg.inspect}")
           next
         end
+
+        if(!decodemsg[:audit_info])
+          log_message("Audit info is empty #{decodemsg.inspect}")
+          next
+        end
 		 	 
     		log_message("Audit Queue Processing: Msg ID: #{a_msg.id}")
 
