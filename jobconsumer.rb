@@ -212,11 +212,11 @@ def parse_error_queue(e_queue, sleeptime)
 
   	  if e_msg != nil then
     		decodemsg = YAML.load(e_msg.body)
-        Error.create({:yaml => e_msg.body, :jobid => decodemsg["message"][:jobid]})
     		log_message("Error Queue Processing: serial ID: #{decodemsg[:serial]} Msg ID: #{e_msg.id}")
     		orig_msg=YAML.load(decodemsg["message"])
     	  orig_msg[:conversion_type]="sep"
     	  sndmsg = enqueue_work_unit(@i_queue, YAML.dump(orig_msg))
+        Error.create({:yaml => e_msg.body, :jobid => orig_msg[:jobid]})
    	  end
   	end
   	
