@@ -155,10 +155,17 @@ def parse_audit_queue(a_queue, sleeptime)
 		 	 
     		log_message("Audit Queue Processing: Msg ID: #{a_msg.id}")
 
+        job_id = "Unknown"
+        serial = decodemsg[:audit_info][:serial]
+        if(serial)
+          serial_parts = serial.split('_')
+          if(serial_parts && serial_parts[0])
+            job_id = serial_parts[0]
+
         # Log audit information to database
         dbhash = decodemsg
         dbhash.merge!({
-                        :jobid => decodemsg[:audit_info][:serial].split('_')[0],
+                        :jobid => job_id,
                         :yaml => a_msg.body,
                         :audit_serial => decodemsg[:audit_info][:serial],
                         :audit_receive_timeout => decodemsg[:audit_info][:receive_message_timeout]
