@@ -161,6 +161,8 @@ def parse_audit_queue(a_queue, sleeptime)
           serial_parts = serial.split('_')
           if(serial_parts && serial_parts[0])
             job_id = serial_parts[0]
+          end
+        end
 
         # Log audit information to database
         dbhash = decodemsg
