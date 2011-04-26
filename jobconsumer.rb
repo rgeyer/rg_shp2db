@@ -152,6 +152,11 @@ def parse_audit_queue(a_queue, sleeptime)
   	  if a_msg != nil then
     	  # Decode msg
     		decodemsg = YAML.load(a_msg.body)
+
+        if(!decodemsg)
+          log_message("Failed to decode message #{a_msg.inspect}")
+          next
+        end
 		 	 
     		log_message("Audit Queue Processing: Msg ID: #{a_msg.id}")
 
